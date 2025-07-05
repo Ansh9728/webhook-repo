@@ -5,13 +5,14 @@ from app.config import Config
 
 mongo_client = PyMongo()
 
-
 def create_app():
     app = Flask(__name__)
 
     app.config.from_object(Config)
 
-    mongo_client.init_app(app)
+    # mongo_client.init_app(app)
+    mongo = PyMongo(app)
+    app.extensions['pymongo'] = mongo
     
     app.register_blueprint(webhook)
 
