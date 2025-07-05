@@ -1,0 +1,95 @@
+/* Reset default styles and set global properties */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    padding: 2rem;
+    line-height: 1.6;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.5rem;
+    color: #24292e;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 2px solid #e1e4e8;
+    padding-bottom: 0.5rem;
+}
+
+/* Event list styling */
+#event-list {
+    list-style: none;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 2px solid red; /* Temporary for debugging */
+    min-height: 100px;
+
+}
+
+#event-list li {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+    border-radius: 4px;
+    background-color: #fafbfc;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Different border colors for each event type */
+#event-list li[data-event-type="push"] {
+    border-left-color: #28a745; /* Green for push */
+}
+
+#event-list li[data-event-type="pull_request"] {
+    border-left-color: #0366d6; /* Blue for pull request */
+}
+
+#event-list li[data-event-type="merge"] {
+    border-left-color: #6f42c1; /* Purple for merge */
+}
+
+/* Hover effect for list items */
+#event-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive typography */
+#event-list li {
+    font-size: 1rem;
+    color: #24292e;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    #event-list {
+        padding: 1rem;
+    }
+
+    #event-list li {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+}
