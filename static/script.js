@@ -6,7 +6,7 @@ async function fetchEvents() {
     console.log('Fetching events at:', new Date().toISOString());
     try {
         const res = await fetch('http://localhost:5000/webhook/event'); // Use localhost for consistency
-        console.log('Fetch response status:', res.status, res.statusText);
+        // console.log('Fetch response status:', res.status, res.statusText);
         if (!res.ok) {
             console.error('Fetch failed with status:', res.status, res.statusText);
             list.innerHTML = '<li>Error loading events. Check console for details.</li>';
@@ -22,9 +22,6 @@ async function fetchEvents() {
             return;
         }
 
-        list.innerHTML = ''; // Clear list
-        console.log('Cleared event list');
-
         if (!Array.isArray(events)) {
             console.error('Events is not an array:', events);
             list.innerHTML = '<li>Invalid data format from server</li>';
@@ -38,9 +35,11 @@ async function fetchEvents() {
         }
 
         const now = Date.now();
+        const EVENT_TIME_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
+
         events.forEach((evt, index) => {
             console.log(`Processing event ${index}:`, evt);
-            if (!evt._id || !evt.type || !evt.author || !evt.to_branch) {
+            if (!evt._id || !evt.action || !evt.request_id || !evt.author || !evt.to_branch || !evt.timestamp) {
                 console.error(`Invalid event data at index ${index}:`, evt);
                 return;
             }
@@ -51,14 +50,14 @@ async function fetchEvents() {
                 return;
             }
 
-            // Skip events older than 15s
+            // Skip events older than 10min
             const evtTime = new Date(evt.timestamp).getTime();
             console.log(`Event timestamp: ${evt.timestamp}, Age: ${(now - evtTime) / 1000}s`);
             if (isNaN(evtTime)) {
                 console.error(`Invalid timestamp for event ID ${evt._id}: ${evt.timestamp}`);
                 return;
             }
-            if (now - evtTime > 15000) {
+            if (now - evtTime > EVENT_TIME_THRESHOLD_MS) {
                 console.log(`Skipping old event ID ${evt._id}, age: ${(now - evtTime) / 1000}s`);
                 return;
             }
@@ -69,11 +68,11 @@ async function fetchEvents() {
             const li = document.createElement('li');
             li.setAttribute('data-event-type', evt.type);
             let text = '';
-            if (evt.type === 'push') {
+            if (evt.action === 'push') {
                 text = `${evt.author} pushed to ${evt.to_branch} on ${new Date(evt.timestamp).toUTCString()}`;
-            } else if (evt.type === 'pull_request') {
+            } else if (evt.action === 'pull_request') {
                 text = `${evt.author} submitted a pull request from ${evt.from_branch} to ${evt.to_branch} on ${new Date(evt.timestamp).toUTCString()}`;
-            } else if (evt.type === 'merge') {
+            } else if (evt.action === 'merge') {
                 text = `${evt.author} merged branch ${evt.from_branch} to ${evt.to_branch} on ${new Date(evt.timestamp).toUTCString()}`;
             } else {
                 console.warn(`Unknown event type for event ID ${evt._id}: ${evt.type}`);
